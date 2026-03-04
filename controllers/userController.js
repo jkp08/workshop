@@ -108,3 +108,8 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Error deleting user", error: error.message });
   }
 };
+
+// DELETE user
+exports.testRoutes = async (req, res) => {
+    res.json({ message: "New change by nikesh!!!!!" });
+};
