@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
+var cors = require('cors')
 const port = 8080;
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const todoRoutes = require("./routes/todoRoutes");
 
+app.use(cors())
 app.use(express.json());
 
 app.get("/", (req, res) => {
