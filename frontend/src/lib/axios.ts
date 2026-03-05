@@ -7,4 +7,16 @@ const api = axios.create({
   },
 })
 
+// Add request interceptor to set authorization header for todo routes
+api.interceptors.request.use((config) => {
+  const url = config.url || ''
+  if (url.includes('/todos')) {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+  }
+  return config
+})
+
 export default api

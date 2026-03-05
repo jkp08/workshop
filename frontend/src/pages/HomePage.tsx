@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { userService, type User } from '../services/userService'
 
@@ -8,12 +8,34 @@ export default function HomePage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    userService
-      .getUsers()
-      .then((res) => setUsers(res.data))
-      .catch(() => setError('Failed to load users'))
-      .finally(() => setLoading(false))
+    fetchUsers()
   }, [])
+
+  const fetchUsers = async () => {
+    try {
+      const res = await userService.getUsers();
+      if (res.data) {
+        setUsers(res.data)
+        return
+      }
+    } catch (error) {
+      setError('Failed to load users')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteUser = async (id: number) => {
+    try {
+      const res = await userService.deleteUser(id);
+      if (res.status == 200) {
+        alert("User deleted successfully");
+        fetchUsers()
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (loading) {
     return (
@@ -34,6 +56,7 @@ export default function HomePage() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
+
         <h1 className="text-2xl font-bold text-gray-900">Users</h1>
         <Link
           to="/users/new"
@@ -62,13 +85,16 @@ export default function HomePage() {
               <tr key={user.id} className="hover:bg-gray-50 transition">
                 <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-6 py-4 text-right flex w-full justify-end gap-2">
                   <Link
                     to={`/users/${user.id}/edit`}
-                    className="px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition inline-block"
+                    className="px-3 py-1.5 cursor-pointer text-sm font-medium rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition inline-block"
                   >
                     View
                   </Link>
+                  <p onClick={() => deleteUser(user.id)} className="px-3 py-1.5 cursor-pointer text-sm font-medium rounded bg-red-200 text-gray-800 hover:bg-gray-300 transition inline-block">
+                    Delete
+                  </p>
                 </td>
               </tr>
             ))}
