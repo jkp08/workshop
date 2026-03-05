@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 
-router.use(authenticateToken);
+// router.use(authenticateToken);
 
 router.get("/", userController.getUsers);
 router.get("/:id", userController.getUserById);
