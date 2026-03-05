@@ -1,56 +1,47 @@
-import { useState } from "react"
-import { Header } from "./components/Header"
+import { useEffect, useState } from "react"
+import { AddUsers, type User } from "./components/AddUsers"
 import Table from "./components/Table"
 
-interface Todo {
-  name: string
-}
 
 function App() {
-  const [todo, setTodo] = useState<Todo[]>([])
-  const [name, setName] = useState<string>("")
+  const [ users, setUsers ] = useState<User[]>([])
 
-  const handleAddTodos = () => {
-    if (name === "") return
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
-    setTodo((prev) => {
-      return [...prev, {
-        name: name
-      }]
+  const fetchUsers = async() => {
+    await fetch("http://localhost:8080/users/",{
+      method: 'GET',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+    }).then(async (response) => {
+        const data = await response.json();
+        setUsers(data)
+    }).catch((e) => {
+      console.log(e);
     })
-    setName("")
   }
 
-  const handleDeleteTodos = (index: number) => {
-    const tempTodos = [...todo].filter((t, i) => {
-      if (index != i) return t
-    })
-    console.log(tempTodos);
-    setTodo(tempTodos)
+  
+  const deleteUsers = async(id: number) => {
+   await fetch(`http://localhost:8080/users/${id}`,{
+    method: "DELETE"
+   }).then(async (res) => {
+      const data = await res.json();
+      if(res.status == 200){
+        alert(data.message)
+        fetchUsers()
+      }
+   })
   }
 
   return (
-    <>
-      {/* <Header /> */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <input value={name} type="text" onChange={(e) => setName(e.target.value)} />
-        <button onClick={handleAddTodos}>Add</button>
-      </div>
-      <div>
-        <h1>MY TODOS</h1>
-        <ul>
-          {
-            todo.map((e, i) => (
-              <div key={e.name} style={{ display: "flex", gap: "12px", cursor: "pointer", alignItems: "center" }}>
-                <li >{e.name}</li>
-                <span onClick={() => handleDeleteTodos(i)}> ❌ </span>
-              </div>
-            ))
-          }
-        </ul>
-      </div>
-      {/* <Table/> */}
-    </>
+    <main className="p-4 justify-center items-centerz flex flex-col">
+      <AddUsers fetchUsers={fetchUsers}/>
+      <Table users={users} deleteUsers={deleteUsers}/>
+    </main>
   )
 }
 

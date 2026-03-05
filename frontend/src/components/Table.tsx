@@ -1,9 +1,11 @@
-const Table = () => {
-  const data = [
-    { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Editor" },
-    { id: 3, name: "Sam Wilson", email: "sam@example.com", role: "User" },
-  ];
+import type { User } from "./AddUsers";
+
+interface TableProps {
+  users: User[]
+  deleteUsers: (id: number) => Promise<void>
+}
+
+const Table = ({ users, deleteUsers }: TableProps) => {
 
   return (
     <div className="p-6">
@@ -21,18 +23,23 @@ const Table = () => {
                 Email
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">
-                Role
+                Delete
               </th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-200 bg-white">
-            {data.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4 text-sm text-gray-700">{row.id}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{row.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{row.email}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{row.role}</td>
+            {users.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50 transition">
+                <td className="px-6 py-4 text-sm text-gray-700">{user.id}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{user.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{user.email}</td>
+
+                <td className="px-6 py-4 text-sm text-gray-700 cursor-pointer" 
+                onClick={() => {
+                  // @ts-ignore
+                  deleteUsers(user.id)
+                }}>{"❌"}</td>
               </tr>
             ))}
           </tbody>
