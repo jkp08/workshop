@@ -3,7 +3,7 @@ const router = express.Router();
 const todoController = require("../controllers/todoController");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 
-// router.use(authenticateToken);
+router.use(authenticateToken);
 
 router.get("/", todoController.getAllLists);
 router.get("/:id", todoController.getOneList);
