@@ -1,56 +1,30 @@
-import { useState } from "react"
-import { Header } from "./components/Header"
-import Table from "./components/Table"
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import HomePage from './pages/HomePage'
+import TodoPage from './pages/TodoPage'
+import UserFormPage from './pages/UserFormPage'
 
-interface Todo {
-  name: string
+function Layout() {
+  return (
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <Navbar />
+      <Outlet />
+    </div>
+  )
 }
 
 function App() {
-  const [todo, setTodo] = useState<Todo[]>([])
-  const [name, setName] = useState<string>("")
-
-  const handleAddTodos = () => {
-    if (name === "") return
-
-    setTodo((prev) => {
-      return [...prev, {
-        name: name
-      }]
-    })
-    setName("")
-  }
-
-  const handleDeleteTodos = (index: number) => {
-    const tempTodos = [...todo].filter((t, i) => {
-      if (index != i) return t
-    })
-    console.log(tempTodos);
-    setTodo(tempTodos)
-  }
-
   return (
-    <>
-      {/* <Header /> */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <input value={name} type="text" onChange={(e) => setName(e.target.value)} />
-        <button onClick={handleAddTodos}>Add</button>
-      </div>
-      <div>
-        <h1>MY TODOS</h1>
-        <ul>
-          {
-            todo.map((e, i) => (
-              <div key={e.name} style={{ display: "flex", gap: "12px", cursor: "pointer", alignItems: "center" }}>
-                <li >{e.name}</li>
-                <span onClick={() => handleDeleteTodos(i)}> ❌ </span>
-              </div>
-            ))
-          }
-        </ul>
-      </div>
-      {/* <Table/> */}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/todo" element={<TodoPage />} />
+          <Route path="/users/new" element={<UserFormPage />} />
+          <Route path="/users/:id/edit" element={<UserFormPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
