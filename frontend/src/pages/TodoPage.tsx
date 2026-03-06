@@ -9,6 +9,7 @@ export default function TodoPage() {
 
   useEffect(() => {
     fetchTodos()
+    console.log('loaded')
   }, [])
 
   const fetchTodos = async () => {
